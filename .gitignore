@@ -1,3 +1,30 @@
+# TypeScript gitignore
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+pids
+logs
+results
+tmp
+public/css/main.css
+coverage
+.env
+node_modules
+bower_components
+.idea
+*.iml
+.DS_Store
+Thumbs.db
+dist/**/*
+yarn.lock
+
+# Python gitignore 
 __pycache__/
 *.py[cod]
 *.class
