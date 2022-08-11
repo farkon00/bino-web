@@ -1,0 +1,12 @@
+body {
+    background-color: rgb(45, 45, 45);
+}
+
+#bin-lable {
+    font-weight: bold;
+    color: rgb(69, 69, 69);
+}
+
+#code-area {
+    background-color: rgb(69, 69, 69);
+}
