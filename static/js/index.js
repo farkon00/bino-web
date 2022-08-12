@@ -1,4 +1,5 @@
 const code_area = document.getElementById('code-area');
+const out_frame = document.getElementById('result-frame');
 const send_timer_time = 5000;
 
 const socket = io();
@@ -19,3 +20,11 @@ function sendCode() {
     clearTimeout(send_timer);
     send_timer = setTimeout(sendCode, send_timer_time);
 }
+
+socket.on("add_out", function (text) {
+    out_frame.innerText += text;
+})
+
+socket.on("reset_out", function () {
+    out_frame.innerText = "";
+})
