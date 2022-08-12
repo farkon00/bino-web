@@ -19,7 +19,6 @@ def home():
 codes = {}
 
 def run_code(code, sid):
-    print(code)
     out = OutputWrapper()
     sys.stdout = out
     sys.stderr = out
@@ -29,6 +28,8 @@ def run_code(code, sid):
     except Exception:
         print("While running your program an exception occured:", file=sys.stdout)
         print_exc()
+    except BaseException:
+        pass
     emit("reset_out", to=sid)
     emit("add_out", out.output, to=sid)
 

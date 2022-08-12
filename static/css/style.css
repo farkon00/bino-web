@@ -1,6 +1,7 @@
 body {
     --coding-areas-size: 50vw;
-    background-color: rgb(45, 45, 45);
+    --default-text-color: #787c99;
+    background-color: #14141b;
 }
 
 #bin-lable {
@@ -9,14 +10,36 @@ body {
 }
 
 #code-area {
-    background-color: rgb(69, 69, 69);
+    color: var(--default-text-color);
+    background-color: #1a1b26;
     width: var(--coding-areas-size);
 }
 
 #result-frame {
     width: var(--coding-areas-size);
     height: 23vh;
-    background-color: rgb(69, 69, 69);
+    background-color: #1a1b26;
     overflow-y: scroll;
     overflow-wrap: break-word;
+}
+
+#result-frame-text {
+    color: var(--default-text-color);
+}
+
+/* Scroll bar */
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1b26;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(216, 216, 216, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(216, 216, 216, 0.1);
 }
