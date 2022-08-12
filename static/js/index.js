@@ -22,9 +22,11 @@ function sendCode() {
 }
 
 socket.on("add_out", function (text) {
+    console.log("Recieved output:\n" + text);
     out_frame.innerText += text;
 })
 
 socket.on("reset_out", function () {
+    console.log("Output cleared");
     out_frame.innerText = "";
 })

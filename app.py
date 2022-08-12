@@ -1,5 +1,11 @@
+import sys
+from traceback import print_exc
+import binarian
+
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, close_room
+
+from std_wrapper import *
 
 app = Flask(__name__)
 app.debug = True
@@ -13,8 +19,18 @@ def home():
 codes = {}
 
 def run_code(code, sid):
+    print(code)
+    out = OutputWrapper()
+    sys.stdout = out
+    sys.stderr = out
+    sys.stdin = StdinWrapper()
+    try:
+        binarian.main(program=code)
+    except Exception:
+        print("While running your program an exception occured:", file=sys.stdout)
+        print_exc()
     emit("reset_out", to=sid)
-    emit("add_out", "Hi from server\n" + code, to=sid)
+    emit("add_out", out.output, to=sid)
 
 @socketio.on("connect")
 def connect():

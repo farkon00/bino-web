@@ -196,7 +196,7 @@ def execute_opers(opers : list[Oper], state : ExecutionState, local : dict[str, 
                 state.is_continued = False
                 break
 
-def main(test_argv : list[str] = None) -> None:
+def main(test_argv : list[str] = None, program: str = None) -> None:
     start_time = time()
 
     if test_argv:
@@ -204,13 +204,15 @@ def main(test_argv : list[str] = None) -> None:
     else:
         argv = sys.argv
 
-    if "--help" in argv or len(argv) < 2:
+    if "--help" in argv or len(argv) < 2 and program is not None:
         print(help_string)
         exit(0)
 
     try:
-        if "-load-cache" not in argv:
+        if "-load-cache" not in argv and program is None:
             code = open(argv[1], "r", encoding="utf-8").read()
+        elif program is not None:
+            code = program
         else:
             ops = pickle.load(open(argv[1], "rb"))
     except Exception:
