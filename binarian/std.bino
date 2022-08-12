@@ -1,0 +1,278 @@
+// Type conversion shortcuts
+func int to_int : val {
+    return (convert val int)
+} 
+
+func float to_float : val {
+    return (convert val float)
+}
+
+func str to_str : val {
+    return (convert val str)
+}
+
+func list to_list : val {
+    return (convert val list)
+}
+
+func object to_tuple : val: list {
+    return (index (pyeval ["res = tuple(inp)"] [["inp" val]] ["res"]) 0)
+}
+
+// Pyeval
+func object execute_method : obj: object, method: str, args: list {
+    return (index (pyeval [(+ (+ "ret = obj." method)  "(*args)")] [["obj" obj] ["args" args]] ["ret"]) 0)
+}
+
+func object execute_function : func_: str, args: list {
+    return (index (pyeval [(+ (+ "ret = " func_)  "(*args)")] [["args" args]] ["ret"]) 0)
+}
+
+func object get_module : module: str {
+    return (index (pyeval [(+ "import " module) (+ "module = " module)] [] ["module"]) 0)
+}
+
+func object get_attr : obj: object, attr: str {
+    return (index (pyeval [(+ "ret = obj." attr)] [["obj" obj]] ["ret"]) 0)
+}
+
+func int has_attr : obj: object, attr: str {
+    return (to_int (execute_function "hasattr" [obj attr]))
+}
+
+func int throw_exception : message: str {
+    pyeval ["throw_exception(message, state)"] [["message" message]] []
+}
+
+func int assert : condition: int, message: str {
+    if (not condition) {
+        throw_exception message
+    }
+    return 1
+}
+
+func object open : file: str, mode: str {
+    return (index (pyeval ["f = open(file, mode)"] [["file" file] ["mode" mode]] ["f"]) 0)
+}
+
+func str read : file : object {
+    assert (has_attr file "read") "Object cant be read"
+    return (execute_method file "read" [])
+} 
+
+func int write : file: object, str_ : str {
+    assert (has_attr file "write") "Object cant be written to"
+    assert (is_instance str_ "str") "Message to write must be a string"
+    return (execute_method file "write" [str_])
+}
+
+func int close : file: object {
+    assert (has_attr file "close") "Object cant be closed"
+    execute_method file "close" []
+}
+
+func int exit : code: int {
+    execute_function "exit" [code]
+}
+
+// Sorry for not having rusteval for safeness
+func object safe_get_attr : obj: object, attr: str {
+    if (has_attr obj attr) {
+        return (get_attr obj attr)
+    } 
+    else {
+        return -1
+    }
+}
+
+func int is_instance : obj: object, type: str {
+    var type = (index (pyeval [(+ "ret = " type)] [] ["ret"]) 0)
+    return (to_int (execute_function "isinstance" [obj type]))
+}
+
+func object type_of : obj: object {
+    return (execute_function "type" [obj])
+} 
+
+func object construct : type: object, args: list {
+    return (index (pyeval ["ret = type_(*args)"] [["type_" type] ["args" args]] ["ret"]) 0)
+}
+
+func float random {
+    var module = (get_module "random")
+    return (execute_method module "random" [])
+}
+
+func int random_range : min: int, max: int {
+    var module = (get_module "random")
+    return (execute_method module "randint" [min max])
+}
+
+var None = (index (pyeval ["ret = None"] [] ["ret"]) 0)
+var null = None
+
+// IO
+func int output : text : str {
+    assert (is_instance text "str") "Text to output must be a string"
+    return (write stdout text)
+} 
+
+func int print : value: object {
+    return (output (+ (to_str value) "\n"))
+}
+
+func list try_input_int : tip: str {
+    output tip
+    var inp = (input)
+    if (is_numeric inp) {
+        return [1 (to_int inp)]
+    } 
+    else {
+        return [0 0]
+    }
+}
+
+var sys = (get_module "sys")
+var stdout = (get_attr sys "stdout")
+
+
+// Math
+func int ceil : val: float {
+    if (== (to_int val) val) {
+        return (to_int val)
+    } 
+    else {
+        return (to_int (+ val 1))
+    }
+}
+
+func int math_to_int : val: float {
+    if (>= (% val 1) 0.5) {
+        return (+ (to_int val) 1)
+    }
+    else {
+        return (to_int val)
+    }
+}
+
+var math = (get_module "math")
+var float pi = (get_attr math "pi")
+
+
+func int xor : val1: int, val2: int {
+    return (not (or (and val1 val2) (not (or val1 val2))))
+}
+
+
+// Strings
+func str join : list_: list, sep: str {
+    var result = ""
+    var first = 1
+    for i list_ {
+        if first {
+            var result = (to_str i)
+            var first = 0
+        }
+        var result = (+ (+ result sep) (to_str i))
+    } 
+
+    return result
+}
+
+func list split : str_: str, sep: str {
+    return (split_limit str_ sep -1)
+}
+
+func list split_limit : str_: str, sep: str, limit: int {
+    var result = [""]
+    var splits = 0
+    assert (is_instance str_ "str") "String to split must be a str"
+    assert (is_instance sep "str") "Sep must be a str"
+
+    for i str_ {
+        if (and (== i sep) (!= splits limit)) {
+            append result ""
+            var splits = (+ splits 1)
+        }
+        else {
+            setindex result -1 (+ (index result -1) i)
+        }
+    }
+
+    return result
+}
+
+func str replace : str_: str, old: str, new: str {
+    assert (is_instance str_ "str") "String to replace must be a str"
+    assert (is_instance old "str") "Old must be a str"
+    assert (is_instance new "str") "New must be a str"
+    assert (<= (len old) 1) "Old must be a single character"
+
+    var res = "" 
+    for i str_ {
+        if (== i old) {
+            var res = (+ res new)
+        }
+        else {
+            var res = (+ res i)
+        }
+    }
+}
+
+func int is_numeric : string: str {
+    var first = 1
+    for i string {
+        if first {
+            var first = 0
+            if (== i "-") {
+                continue
+            }
+        }
+        if (not (in i (to_list "0123456789"))) {
+            return 0
+        }
+    }
+
+    return 1
+}
+
+// Lists
+func int len : iter {
+    assert (is_instance iter "(list, str)") (+ "Cant get len of " (to_str (type_of iter)))
+    return (execute_function "len" [iter])
+}
+
+func list map : list_: list, callback: function {
+    var res = []
+    for i list_ {
+        append res (callback i)
+    }
+    return res
+}
+
+func list filter : list_: list, callback: function {
+    var res = []
+    for i list_ {
+        if (callback i) {
+            append res i
+        }
+    }
+    return res
+}
+
+func int in : val: object, _list: list {
+    for i _list {
+        if (== val i) {
+            return 1
+        }
+    }
+}
+
+func int sum : _list: list {
+    var sum = 0
+    for i _list {
+        var sum = (+ sum i)
+    }
+
+    return sum
+}
