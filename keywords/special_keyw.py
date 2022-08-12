@@ -1,8 +1,28 @@
-import traceback as tb
+import sys
+
+from importlib.abc import MetaPathFinder
 from funcs.exceptions import binarian_assert, throw_exception
 from funcs.utils import check_args, type_to_str
 from bin_types.list import List
 from parsing.oper import Oper
+
+# Fobiding for pyeval to import os
+class ForbiddenModules(MetaPathFinder):
+    RESTRICTED_MODULES = ["os"]
+    def __init__(self):
+        super().__init__()
+
+    def find_spec(self, fullname, path, target=None):
+        if fullname in self.RESTRICTED_MODULES:
+            raise ImportError(fullname)
+sys.meta_path.insert(0, ForbiddenModules())
+
+class DummySys:
+    def __init__(self):
+        self.stdout = sys.stdout
+        self.stderr = sys.stderr
+        self.stdin = sys.stdin
+        self.argv = sys.argv
 
 def convert_keyword(op : Oper, state, local : dict[str, object] | None):
     original = state.GLOBAL_FUNCS['execute_line'](op.args[0], state, local)
@@ -24,8 +44,19 @@ def pyeval_keyword(op : Oper, state, local : dict[str, object] | None):
 
     glob = {i : (list(j) if isinstance(j, List) else j) for i, j in imports}
     glob = {**glob, "throw_exception" : throw_exception, "state" : state}
+    
+    try:
+        del sys.modules["os"]
+    except KeyError: pass
+
+    dummy_sys = object()
+    real_sys = sys
+
+    sys.modules["sys"] = DummySys()
+
     try:
         exec("\n".join(code), glob)
+        sys.modules["sys"] = real_sys
     except Exception as e:
         throw_exception(f"Python exception occured : {e}", state)
 
