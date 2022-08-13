@@ -1,10 +1,12 @@
 import sys
+import os
 
 from importlib.abc import MetaPathFinder
 from funcs.exceptions import binarian_assert, throw_exception
 from funcs.utils import check_args, type_to_str
 from bin_types.list import List
 from parsing.oper import Oper
+
 
 # Fobiding for pyeval to import os
 class ForbiddenModules(MetaPathFinder):
@@ -44,7 +46,7 @@ def pyeval_keyword(op : Oper, state, local : dict[str, object] | None):
 
     glob = {i : (list(j) if isinstance(j, List) else j) for i, j in imports}
     glob = {**glob, "throw_exception" : throw_exception, "state" : state}
-    
+
     for i in ForbiddenModules.RESTRICTED_MODULES:
         try:
             del sys.modules[i]
@@ -55,10 +57,12 @@ def pyeval_keyword(op : Oper, state, local : dict[str, object] | None):
     sys.modules["sys"] = DummySys()
 
     try:
-        exec("\n".join(code), glob)
-        sys.modules["sys"] = real_sys
+        exec("def open(*args): raise Exception(\"can't open a file in online mode\")\n" + "\n".join(code), glob)
     except Exception as e:
         throw_exception(f"Python exception occured : {e}", state)
+
+    # Clean up sandbox
+    sys.modules["sys"] = real_sys
 
     ret = []
     for i in exports:
