@@ -27,6 +27,20 @@ body {
     color: var(--default-text-color);
 }
 
+footer {
+    position: fixed;
+    width: 100vw;
+}
+
+.footer-link {
+    color: rgb(69, 69, 69);
+    padding: 0 5px;
+}
+
+.footer-link:hover {
+    color: var(--default-text-color);
+}
+
 /* Scroll bar */
 ::-webkit-scrollbar {
     width: 15px;
