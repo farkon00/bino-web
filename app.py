@@ -11,8 +11,6 @@ from std_wrapper import *
 
 DEFAULT_TIME_LIMIT = 7
 
-out = sys.stdout
-
 app = Flask(__name__)
 app.debug = True
 
@@ -68,7 +66,6 @@ def run_code(code, sid):
             is_alive = False
         if not is_alive:
             rec = pipe_rec.recv()
-            print(rec, file=out)
             emit("reset_out", to=sid)
             emit("add_out", rec, to=sid)
             break
