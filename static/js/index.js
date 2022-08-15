@@ -1,6 +1,6 @@
 const code_area = document.getElementById('code-area');
 const out_frame = document.getElementById('result-frame-text');
-const send_timer_time = 5000;
+const send_timer_time = 7000;
 
 const socket = io();
 
