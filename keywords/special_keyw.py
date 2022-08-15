@@ -1,5 +1,4 @@
 import sys
-import os
 
 from importlib.abc import MetaPathFinder
 from funcs.exceptions import binarian_assert, throw_exception
