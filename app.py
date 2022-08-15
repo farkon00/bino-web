@@ -65,6 +65,7 @@ def run_code(code, sid):
         except ValueError:
             is_alive = False
         if not is_alive:
+            interp.close()
             rec = pipe_rec.recv()
             emit("reset_out", to=sid)
             emit("add_out", rec, to=sid)
