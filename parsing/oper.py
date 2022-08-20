@@ -33,7 +33,7 @@ class Oper:
      values : list = None, oper: list[Oper] = None, types : list[type] = None):
         if args is None:
             args = []
-        elif not isinstance(args, list | tuple):
+        elif not isinstance(args, (list, tuple)):
             args = [args]
         if oper is None:
             oper = []
@@ -41,7 +41,7 @@ class Oper:
             types = []
         if values is None:
             values = []
-        elif not isinstance(types, list | tuple):
+        elif not isinstance(types, (list, tuple)):
             types = [types]
 
         self.id = id

@@ -28,15 +28,15 @@ def tc_line2(op : Oper, state):
         arg2 = tc_line2(op.args[1], state)
 
         if arg1 not in (object, None) and op.values[0] not in state.iter_operations:
-            binarian_assert(not issubclass(arg1, float | int),
+            binarian_assert(not issubclass(arg1, (float, int)),
             f"Unexpected operation argument type, {exp_type} was expected, {type_to_str(arg1)} found.", state
             )
         if arg2 not in (object, None) and op.values[0] not in state.iter_operations:
-            binarian_assert(not issubclass(arg2, float | int),
+            binarian_assert(not issubclass(arg2, (float, int)),
             f"Unexpected operation argument type, {exp_type} was expected, {type_to_str(arg2)} found.", state
             )
 
-        if issubclass(arg1, str | List) or issubclass(arg2, str | List):
+        if issubclass(arg1, (str, List)) or issubclass(arg2, (str, List)):
             binarian_assert(arg1 != arg2 and op.values[0] not in state.diff_types_operations and\
                 arg1 not in (object, None) and arg2 not in (object, None),
                 f"Cant perform operation with different types : {type_to_str(arg1)} and {type_to_str(arg2)}", state
@@ -76,7 +76,7 @@ def tc_line2(op : Oper, state):
     elif op.id == OpIds.convert:
         return op.values[0]
 
-    elif op.id == OpIds.if_ | OpIds.else_ | OpIds.elif_ | OpIds.while_:
+    elif op.id == OpIds.if_ or op.id == OpIds.else_ or op.id == OpIds.elif_ or op.id == OpIds.while_:
         for i in op.oper:
             tc_line2(i, state)
 

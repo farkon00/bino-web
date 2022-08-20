@@ -106,7 +106,7 @@ def parse_line(line, state):
         binarian_assert(len(op.args) != 1, "Convert must have two argument.", state)
         return op
 
-    elif lexic[0] == "and" | "or":
+    elif lexic[0] == "and" or lexic[0] == "or":
         op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
         binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
         return op
@@ -116,17 +116,17 @@ def parse_line(line, state):
         binarian_assert(len(op.args) != 1, "Not must have one argument.", state)
         return op
 
-    elif lexic[0] == "index" | "append" | "zip":
+    elif lexic[0] == "index" or lexic[0] == "append" or lexic[0] == "zip":
         op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
         binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
         return op
 
-    elif lexic[0] == "setindex" | "pyeval":
+    elif lexic[0] == "setindex" or lexic[0] == "pyeval":
         op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
         binarian_assert(len(op.args) != 3, f"{lexic[0][0].upper() + lexic[0][1:]} must have three argument.", state)
         return op
 
-    elif lexic[0] == "if" | "elif" | "while":
+    elif lexic[0] == "if" or lexic[0] == "elif" or lexic[0] == "while":
         op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
         binarian_assert(len(op.args) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have one argument.", state)
         op.oper = parse_block(state, state.current_line)
@@ -145,7 +145,7 @@ def parse_line(line, state):
         op.oper = parse_block(state, state.current_line)
         return op
 
-    elif lexic[0] == "break" | "continue":
+    elif lexic[0] == "break" or lexic[0] == "continue":
         binarian_assert(len(lexic) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have no arguments.", state)
         return Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line,)
 

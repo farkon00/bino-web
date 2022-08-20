@@ -13,7 +13,7 @@ def execute_oper(op : Oper, state, local : Optional[Dict[str, object]]):
     binarian_assert(not isinstance(arg1, types) and not isinstance(arg2, types) and (operation not in state.diff_types_operations),
         f"Invalid types for operation {operation}", state)
 
-    if isinstance(arg1, str | List) or isinstance(arg2, str | List):
+    if isinstance(arg1, (str, List)) or isinstance(arg2, (str, List)):
         binarian_assert(type(arg1) != type(arg2) and op.values[0] not in state.diff_types_operations, 
             f"Cant perform operation with different types : {type_to_str(type(arg1))} and {type_to_str(type(arg2))}", state
         )

@@ -55,7 +55,7 @@ def tc_line1(op : Oper, state):
     elif op.id == OpIds.convert:
         return op.values[0]
 
-    elif op.id == OpIds.if_ | OpIds.else_ | OpIds.elif_ | OpIds.while_:
+    elif op.id == OpIds.if_ or op.id == OpIds.else_ or op.id == OpIds.elif_ or op.id == OpIds.while_:
         for i in op.oper:
             tc_line1(i, state)
 

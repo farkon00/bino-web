@@ -16,7 +16,7 @@ def for_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
 
     var_name = op.values[0]
     list_ = state.GLOBAL_FUNCS["execute_line"](op.args[0], state, local)
-    binarian_assert(not isinstance(list_, List | str), f"Cant iterate throw {type_to_str(type(list_))}.", state)
+    binarian_assert(not isinstance(list_, (List, str)), f"Cant iterate throw {type_to_str(type(list_))}.", state)
     for loop_iter in list_:
         if local is not None:
             local[var_name] = loop_iter
