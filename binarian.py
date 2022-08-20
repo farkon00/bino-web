@@ -179,7 +179,7 @@ def main(test_argv : ListType[str] = None, program: str = None) -> None:
     else:
         argv = sys.argv
 
-    if "--help" in argv or len(argv) < 2 and program is not None:
+    if ("--help" in argv or len(argv) < 2) and program is None:
         print(help_string)
         exit(0)
 
