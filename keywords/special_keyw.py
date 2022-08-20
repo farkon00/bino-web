@@ -1,6 +1,6 @@
 import sys
 
-from typing import Optional
+from typing import Optional, Dict
 
 from importlib.abc import MetaPathFinder
 from funcs.exceptions import binarian_assert, throw_exception
@@ -27,7 +27,7 @@ class DummySys:
         self.stdin = sys.stdin
         self.argv = sys.argv
 
-def convert_keyword(op : Oper, state, local : Optional[dict[str, object]]):
+def convert_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     original = state.GLOBAL_FUNCS['execute_line'](op.args[0], state, local)
     end_type = op.values[0]
 
@@ -42,7 +42,7 @@ def convert_keyword(op : Oper, state, local : Optional[dict[str, object]]):
     if state.is_expr:
         return final
 
-def pyeval_keyword(op : Oper, state, local : Optional[dict[str, object]]):
+def pyeval_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     code, imports, exports = check_args(op, [List, List, List], state, local)
 
     glob = {i : (list(j) if isinstance(j, List) else j) for i, j in imports}

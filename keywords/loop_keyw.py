@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 
 from funcs.exceptions import binarian_assert
 from funcs.utils import type_to_str
@@ -11,7 +11,7 @@ def break_keyword(op : Oper, state):
 def continue_keyword(op : Oper, state):
     state.is_continued = True
 
-def for_keyword(op : Oper, state, local : Optional[dict[str, object]]):
+def for_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     binarian_assert(state.is_expr, "This operation is unavailable in expressions.", state)
 
     var_name = op.values[0]
@@ -35,7 +35,7 @@ def for_keyword(op : Oper, state, local : Optional[dict[str, object]]):
         if state.last_return != None:
             break
 
-def while_keyword(op : Oper, state, local : Optional[dict[str, object]]):
+def while_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     binarian_assert(state.is_expr, "This operation is unavailable in expressions.", state)
 
 

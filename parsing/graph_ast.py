@@ -1,6 +1,8 @@
 from io import TextIOWrapper
-from .oper import Oper, OpIds
+from typing import List 
 from subprocess import run
+
+from .oper import Oper, OpIds
 
 class AstRenderingState:
     def __init__(self, out : TextIOWrapper):
@@ -9,7 +11,7 @@ class AstRenderingState:
 
         self.out = out
 
-def render_ast(ops : list[Oper], name : str) -> None:
+def render_ast(ops : List[Oper], name : str) -> None:
     name = ".".join(name.split(".")[:-1])
     with open(name + ".dot", "w") as out:
         state = AstRenderingState(out)

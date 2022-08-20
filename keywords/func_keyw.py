@@ -1,16 +1,16 @@
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Dict
 from bin_types.function import Function
 from funcs.exceptions import binarian_assert
 from funcs.utils import check_args
 from parsing.oper import Oper
 
-def func_keyword(op : Oper, state, in_vars : dict[str, object], is_func : bool):
+def func_keyword(op : Oper, state, in_vars : Dict[str, object], is_func : bool):
     binarian_assert(state.is_expr, "This operation is unavailable in expressions.", state)
     binarian_assert(is_func, "Cant define function inside other function.", state)
 
     in_vars[op.values[0]] = Function(op)
 
-def call_keyword(op : Oper, state, local : Optional[dict[str, object]]):
+def call_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     func_args : list = check_args(op, [Function], state, local)
     if isinstance(func_args, Iterable):
         args = func_args[1:]
@@ -35,7 +35,7 @@ def call_keyword(op : Oper, state, local : Optional[dict[str, object]]):
 
     return ret
 
-def return_keyword(op : Oper, state, is_func : bool, local : Optional[dict[str, object]]):
+def return_keyword(op : Oper, state, is_func : bool, local : Optional[Dict[str, object]]):
     binarian_assert(not is_func, 'Keyword "return" is restricted out of functions.', state)
 
     state.last_return = check_args(op, [object], state, local)[0]

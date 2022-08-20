@@ -1,11 +1,12 @@
+import bin_types.list as bin_list
+
+from typing import List
+
 from .oper import *
-
-from bin_types.list import List
-
 from funcs.exceptions import binarian_assert, throw_exception
 from funcs.brackets_parser import parse_lexic
 
-def get_args(lexic, state) -> list[Oper]:
+def get_args(lexic, state) -> List[Oper]:
     """
     Parses literal, variable or expression and returns list of Oper object 
     """
@@ -16,7 +17,7 @@ def get_args(lexic, state) -> list[Oper]:
     for var in lexic:
         if var[0] == "[": # list parsing
             elems = get_args(var[1:-1].split(), state)
-            ret.append(Oper(OpIds.value, state.current_line, values=[List(elems)]))
+            ret.append(Oper(OpIds.value, state.current_line, values=[bin_list.List(elems)]))
 
         elif var[0] == '"': # string parsing
             ret.append(Oper(OpIds.value, state.current_line, values=[parse_string(var, state)]))

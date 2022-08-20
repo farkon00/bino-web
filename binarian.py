@@ -3,7 +3,8 @@ import pickle
 
 from time import time
 from posixpath import abspath
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict
+from typing import List as ListType
 
 from parsing.parsing import *
 from parsing.graph_ast import *
@@ -18,26 +19,26 @@ from keywords import *
 class ExecutionState:
     """Class that contains all data about execution state and constants for execution"""
     def __init__(self, code : str) -> None:
-        self.vars : dict[str, object] = {}
+        self.vars : Dict[str, object] = {}
         self.is_expr : bool = False
 
         self.current_line : int = -1
 
-        self.opened_ifs : list[bool] = []
+        self.opened_ifs : ListType[bool] = []
 
-        self.call_stack : list[tuple[str, int]] = [] # func_name, line
+        self.call_stack : ListType[tuple[str, int]] = [] # func_name, line
         self.last_return : object = None 
         self.is_breaked : bool = False
         self.is_continued: bool = False
 
         self.code : str = code
-        self.lines : list[str] = code.split("\n")
+        self.lines : ListType[str] = code.split("\n")
         self.std_lines : int = 0 # Shold be setted to right value in main 
-        self.std_lib_vars : dict[str, object] = {} 
+        self.std_lib_vars : Dict[str, object] = {} 
 
         self.input_time : int = 0
 
-        self.types : dict[str, type] = {
+        self.types : Dict[str, type] = {
             "object" : object,
             "int" : int,
             "float" : float,
@@ -46,7 +47,7 @@ class ExecutionState:
             "list" : List,
         }
 
-        self.operations : list[str] = [
+        self.operations : ListType[str] = [
             "+", "-", "*", "/", "**", "%", ">", "<", ">=", "<=", "==", "!="
         ]
         self.iter_operations : tuple[str, str, str] = (
@@ -56,21 +57,21 @@ class ExecutionState:
             "==", "!="
         )
 
-        self.RESTRICTED_NAMES : list[str] = [
+        self.RESTRICTED_NAMES : ListType[str] = [
             "and", "or", "not", "var", "drop", "input", "func",
             "return", "index", "append", "zip", "for", "while", "if",
             "elif", "else", "object", "int", "float", "list", "function",
             "break", "continue",
             *self.operations
         ]
-        self.BRACKETS : list[str] = ["(", ")", "[", "]", "{", "}"]
-        self.GLOBAL_FUNCS : dict[str, Callable] = {
+        self.BRACKETS : ListType[str] = ["(", ")", "[", "]", "{", "}"]
+        self.GLOBAL_FUNCS : Dict[str, Callable] = {
             "execute_line" : execute_line,
             "execute_opers" : execute_opers,
             "parse_line" : parse_line
         }
 
-def execute_line(op : Oper, state : ExecutionState, local : Optional[dict[str, object]], is_expr : bool = True) -> object:
+def execute_line(op : Oper, state : ExecutionState, local : Optional[Dict[str, object]], is_expr : bool = True) -> object:
     """Executes one operation"""
     state.current_line = op.line
 
@@ -150,7 +151,7 @@ def execute_line(op : Oper, state : ExecutionState, local : Optional[dict[str, o
     
     return None
 
-def execute_opers(opers : list[Oper], state : ExecutionState, local : Optional[dict[str, object]],
+def execute_opers(opers : ListType[Oper], state : ExecutionState, local : Optional[Dict[str, object]],
  main : bool = False, is_loop : bool = False) -> None:
     """Executes list of operations"""
     for i in opers:
@@ -170,7 +171,7 @@ def execute_opers(opers : list[Oper], state : ExecutionState, local : Optional[d
                 state.is_continued = False
                 break
 
-def main(test_argv : list[str] = None, program: str = None) -> None:
+def main(test_argv : ListType[str] = None, program: str = None) -> None:
     start_time = time()
 
     if test_argv:

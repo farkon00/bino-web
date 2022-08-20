@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Dict
 
 from bin_types.list import List
 from funcs.exceptions import binarian_assert
 from funcs.utils import type_to_str
 from parsing.oper import Oper
 
-def execute_oper(op : Oper, state, local : Optional[dict[str, object]]):
+def execute_oper(op : Oper, state, local : Optional[Dict[str, object]]):
     operation = op.values[0]
     types = (int, float, str, List)
     arg1 = state.GLOBAL_FUNCS["execute_line"](op.args[0], state, local)

@@ -1,3 +1,5 @@
+from typing import List
+
 from funcs.brackets_parser import *
 from funcs.exceptions import *
 from parsing.oper import Oper
@@ -10,7 +12,7 @@ class Function:
         self.args = oper.values[1:]
         self.name = oper.values[0]
 
-    def execute(self, args : list[str], state) -> object:
+    def execute(self, args : List[str], state) -> object:
         """Executes function"""
         is_expr_before = state.is_expr
         state.is_expr = False

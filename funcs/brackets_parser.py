@@ -1,6 +1,8 @@
+from typing import List
+
 from .exceptions import *
 
-def parse_lexic(lexic : list[str], state) -> list[str]:
+def parse_lexic(lexic : List[str], state) -> List[str]:
     """Finds [ and ] in lexic and combines all lexic beetween them"""
     arrays_opened = 0
     expr_opened = 0
