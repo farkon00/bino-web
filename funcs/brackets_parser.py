@@ -16,17 +16,14 @@ def parse_lexic(lexic : list[str], state) -> list[str]:
             is_string_opened = not is_string_opened
 
         if not is_string_opened:
-            match symb:
-                case " ": 
-                    if not arrays_opened and not expr_opened: 
-                        res.append("")
-
-                case "[": arrays_opened += 1
-                case "]": arrays_opened -= 1
-                case "(": expr_opened += 1
-                case ")": expr_opened -= 1
-                case "{": symb = ""
-                case "}": symb = ""
+            if symb == " " and not arrays_opened and not expr_opened: 
+                res.append("")
+            elif symb == "[": arrays_opened += 1
+            elif symb == "]": arrays_opened -= 1
+            elif symb == "(": expr_opened += 1
+            elif symb == ")": expr_opened -= 1
+            elif symb == "{": symb = ""
+            elif symb == "}": symb = ""
 
         res[-1] += symb
 

@@ -62,13 +62,12 @@ def parse_string(var : str, state) -> str:
     escaped = False
     for i in var[1:-1]:
         if escaped:
-            match i:
-                case "n": char = "\n"
-                case "t": char = "\t"
-                case "r": char = "\r"
-                case "\"": char = "\""
-                case "\\": char = "\\"
-                case _: throw_exception(f"Unknown escape sequence: \\{i}", state)
+            if i == "n": char = "\n"
+            if i == "t": char = "\t"
+            if i == "r": char = "\r"
+            if i == "\"": char = "\""
+            if i == "\\": char = "\\"
+            else: throw_exception(f"Unknown escape sequence: \\{i}", state)
             escaped = False
         elif i == "\\":
             escaped = True

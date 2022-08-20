@@ -1,9 +1,11 @@
+from typing import Optional
+
 from bin_types.list import List
 from funcs.exceptions import binarian_assert
 from funcs.utils import type_to_str
 from parsing.oper import Oper
 
-def execute_oper(op : Oper, state, local : dict[str, object] | None):
+def execute_oper(op : Oper, state, local : Optional[dict[str, object]]):
     operation = op.values[0]
     types = (int, float, str, List)
     arg1 = state.GLOBAL_FUNCS["execute_line"](op.args[0], state, local)
@@ -19,18 +21,17 @@ def execute_oper(op : Oper, state, local : dict[str, object] | None):
             f"Cant perform \"{operation}\" on {type_to_str(type(arg1))} and {type_to_str(type(arg2))}", state
         )
 
-    match operation:
-        case "+":  return     arg1 + arg2 if not isinstance(arg1, List) else List(arg1 + arg2)
-        case "-":  return     arg1 - arg2
-        case "*":  return     arg1 * arg2
-        case "/":  return     arg1 / arg2  
-        case "**": return     arg1 ** arg2
-        case "%":  return     arg1 % arg2
-        case "==": return int(arg1 == arg2)
-        case "!=": return int(arg1 != arg2)
-        case ">":  return int(arg1 > arg2)
-        case "<":  return int(arg1 < arg2)
-        case ">=": return int(arg1 >= arg2)
-        case "<=": return int(arg1 <= arg2)
+    if operation == "+":    return     arg1 + arg2 if not isinstance(arg1, List) else List(arg1 + arg2)
+    elif operation == "-":  return     arg1 - arg2
+    elif operation == "*":  return     arg1 * arg2
+    elif operation == "/":  return     arg1 / arg2  
+    elif operation == "**": return     arg1 ** arg2
+    elif operation == "%":  return     arg1 % arg2
+    elif operation == "==": return int(arg1 == arg2)
+    elif operation == "!=": return int(arg1 != arg2)
+    elif operation == ">":  return int(arg1 > arg2)
+    elif operation == "<":  return int(arg1 < arg2)
+    elif operation == ">=": return int(arg1 >= arg2)
+    elif operation == "<=": return int(arg1 <= arg2)
 
     assert False, "Unreachable, operation not found"

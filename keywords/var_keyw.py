@@ -1,7 +1,9 @@
+from typing import Optional
+
 from funcs.exceptions import binarian_assert
 from parsing.oper import Oper
 
-def var_keyword(op : Oper, state, in_vars : dict[str, object], local : dict[str, object] | None) -> None:
+def var_keyword(op : Oper, state, in_vars : dict[str, object], local : Optional[dict[str, object]]) -> None:
     # Error handeling
     binarian_assert(state.is_expr, "This operation is unavailable in expressions.", state)
 

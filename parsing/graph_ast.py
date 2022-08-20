@@ -25,35 +25,34 @@ def render_node(state : AstRenderingState, op : Oper) -> int:
     state.last_node += 1
     my_node = state.last_node
     skip_args = 0
-    match op.id:
-        case OpIds.value | OpIds.variable:
-            if isinstance(op.values[0], list):
-                state.out.write(f"Node{my_node} [label=\"List\"]\n")
-                for i in op.values[0]:
-                    state.out.write(f"Node{my_node} -> Node{render_node(state, i)} [arrowhead=dot];\n")
-            else:
-                state.out.write(
-                    f"Node{my_node} [label=\"{op.values[0] if not isinstance(op.values[0], list) else 'listy'}\" shape=none];\n"
-                )
-
-        case OpIds.operation:
+    if op.id == OpIds.value | OpIds.variable:
+        if isinstance(op.values[0], list):
+            state.out.write(f"Node{my_node} [label=\"List\"]\n")
+            for i in op.values[0]:
+                state.out.write(f"Node{my_node} -> Node{render_node(state, i)} [arrowhead=dot];\n")
+        else:
             state.out.write(
-                f"Node{my_node} [label=\"{op.values[0]}\"];\n"
+                f"Node{my_node} [label=\"{op.values[0] if not isinstance(op.values[0], list) else 'listy'}\" shape=none];\n"
             )
 
-        case OpIds.call:
-            skip_args = 1
-            state.out.write(
-                f"Node{my_node} [label=\"{op.args[0].values[0]}\"];\n"    
-            )
-        
-        case _:
-            label = str(op.id).removeprefix('OpIds.').removesuffix('_') + "\\n"
-            label += '\\n'.join([str(i) for i in op.values])
+    elif op.id == OpIds.operation:
+        state.out.write(
+            f"Node{my_node} [label=\"{op.values[0]}\"];\n"
+        )
 
-            state.out.write(
-                f"Node{my_node} [label=\"{label}\" shape=box];\n"
-            )
+    elif op.id == OpIds.call:
+        skip_args = 1
+        state.out.write(
+            f"Node{my_node} [label=\"{op.args[0].values[0]}\"];\n"    
+        )
+    
+    else:
+        label = str(op.id).removeprefix('OpIds.').removesuffix('_') + "\\n"
+        label += '\\n'.join([str(i) for i in op.values])
+
+        state.out.write(
+            f"Node{my_node} [label=\"{label}\" shape=box];\n"
+        )
 
     for i in op.args[skip_args:]:
         new_node = render_node(state, i)

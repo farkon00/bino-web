@@ -65,130 +65,129 @@ def parse_line(line, state):
         binarian_assert(len(op.args) != 2, "Operation must have two argument.", state)
         return op
 
-    match lexic[0]:
-        case "var":
-            parts = [None, None]
-            for j, i in enumerate(lexic):
-                if "=" in i:
-                    spl = i.find("=")
-                    parts[0] = lexic[:j] + [i[:spl]]
-                    parts[1] = [i[spl + 1:]] + lexic[j + 1:]
-                    break
+    if lexic[0] == "var":
+        parts = [None, None]
+        for j, i in enumerate(lexic):
+            if "=" in i:
+                spl = i.find("=")
+                parts[0] = lexic[:j] + [i[:spl]]
+                parts[1] = [i[spl + 1:]] + lexic[j + 1:]
+                break
 
-            if not parts[0][-1]: parts[0] = parts[0][:-1]
-            if not parts[1][0]: parts[1] = parts[1][1:]
-            binarian_assert(len(parts[0]) < 2, "Variable must have name and value.", state)
-            
-            if len(parts[0]) == 3:
-                type_ = get_type(parts[0][1], state, {}, True)
-                name = parts[0][2].strip()
-            else:
-                type_ = None
-                name = parts[0][1].strip()
-
-            binarian_assert(is_name_unavailable(name, state), f"Variable name is unavailiable : {name}", state)
-
-            op = Oper(OpIds.var, state.current_line, get_args(parts[1], state), values=[name], types=type_)
-            binarian_assert(len(op.args) != 1, "Variable must have only one value.", state)
-            return op
-
-        case "drop":
-            binarian_assert(len(lexic) != 2, "Drop must have one argument.", state)
-            binarian_assert(is_name_unavailable(lexic[1], state), f"Variable name is unavailiable : {lexic[0]}", state)
-            return Oper(OpIds.drop, state.current_line, values=[lexic[1]])
-
-        case "input":
-            binarian_assert(len(lexic) != 1, "Input must have no argument.", state)
-            return Oper(OpIds.input, state.current_line)
-
-        case "convert":
-            binarian_assert(lexic[-1] not in state.types, f"Type was not found : {lexic[-1]}", state)
-            op = Oper(OpIds.convert, state.current_line, get_args(lexic[1:-1], state), values=[get_type(lexic[-1], state, {}, True)])
-            binarian_assert(len(op.args) != 1, "Convert must have two argument.", state)
-            return op
-
-        case "and" | "or":
-            op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
-            return op
-
-        case "not":
-            op = Oper(OpIds.not_, state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 1, "Not must have one argument.", state)
-            return op
-
-        case "index" | "append" | "zip":
-            op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
-            return op
-
-        case "setindex" | "pyeval":
-            op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 3, f"{lexic[0][0].upper() + lexic[0][1:]} must have three argument.", state)
-            return op
-
-        case "if" | "elif" | "while":
-            op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have one argument.", state)
-            op.oper = parse_block(state, state.current_line)
-            return op
+        if not parts[0][-1]: parts[0] = parts[0][:-1]
+        if not parts[1][0]: parts[1] = parts[1][1:]
+        binarian_assert(len(parts[0]) < 2, "Variable must have name and value.", state)
         
-        case "else":
-            op = Oper(OpIds.else_, state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 0, "Else must have no argument.", state)
-            op.oper = parse_block(state, state.current_line)
-            return op
+        if len(parts[0]) == 3:
+            type_ = get_type(parts[0][1], state, {}, True)
+            name = parts[0][2].strip()
+        else:
+            type_ = None
+            name = parts[0][1].strip()
 
-        case "for":
-            op = Oper(OpIds.for_, state.current_line, get_args(lexic[2:], state), values=[lexic[1]])
-            binarian_assert(len(op.args) != 1, "For must have two argument.", state)
-            binarian_assert(is_name_unavailable(op.values[0], state), f"For variable name is unavailable : {op.args[0]}", state)
-            op.oper = parse_block(state, state.current_line)
-            return op
+        binarian_assert(is_name_unavailable(name, state), f"Variable name is unavailiable : {name}", state)
 
-        case "break" | "continue":
-            binarian_assert(len(lexic) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have no arguments.", state)
-            return Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line,)
+        op = Oper(OpIds.var, state.current_line, get_args(parts[1], state), values=[name], types=type_)
+        binarian_assert(len(op.args) != 1, "Variable must have only one value.", state)
+        return op
 
-        case "func":
-            parts = line.split(":", maxsplit=1)
-            parts[0] = parts[0].replace("{", "").replace("}", "").split()
+    elif lexic[0] == "drop":
+        binarian_assert(len(lexic) != 2, "Drop must have one argument.", state)
+        binarian_assert(is_name_unavailable(lexic[1], state), f"Variable name is unavailiable : {lexic[0]}", state)
+        return Oper(OpIds.drop, state.current_line, values=[lexic[1]])
 
-            binarian_assert(len(parts[0]) < 2, "Function must have name.", state)
-            if len(parts[0]) == 2:
-                name = parts[0][1].strip()
-                ret_type = object
-            elif len(parts[0]) == 3:
-                name = parts[0][2].strip()
-                ret_type = get_type(parts[0][1], state, {}, True)
-            else:
-                throw_exception("Function first part must have only 2 arguments.", state)
+    elif lexic[0] == "input":
+        binarian_assert(len(lexic) != 1, "Input must have no argument.", state)
+        return Oper(OpIds.input, state.current_line)
 
-            binarian_assert(is_name_unavailable(name, state), f"Function name is unavailiable : {name}.", state)
+    elif lexic[0] == "convert":
+        binarian_assert(lexic[-1] not in state.types, f"Type was not found : {lexic[-1]}", state)
+        op = Oper(OpIds.convert, state.current_line, get_args(lexic[1:-1], state), values=[get_type(lexic[-1], state, {}, True)])
+        binarian_assert(len(op.args) != 1, "Convert must have two argument.", state)
+        return op
 
-            args = []
-            args_types = []
-            if len(parts) > 1:
-                for i in parts[1].replace("{", "").replace("}", "").split(","):
-                    i = i.split(":")
-                    if len(i) == 2: 
-                        args.append(i[0].strip())
-                        args_types.append(get_type(i[1].strip(), state, {}, True))
-                    elif len(i) == 1 and i[0].strip():
-                        args.append(i[0].strip())
-                        args_types.append(object)
-                    else:
-                        throw_exception('Argument must have only one or fewer ":" and must have a name.', state)
-                    binarian_assert(is_name_unavailable(args[-1], state), f"Argument name is unavailiable : {args[-1]}.", state)
+    elif lexic[0] == "and" | "or":
+        op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
+        return op
 
-            op = Oper(OpIds.func, state.current_line, values=[name, *args], types=[ret_type, *args_types])
-            op.oper = parse_block(state, state.current_line)
-            return op
+    elif lexic[0] == "not":
+        op = Oper(OpIds.not_, state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 1, "Not must have one argument.", state)
+        return op
 
-        case "return":
-            op = Oper(OpIds.return_, state.current_line, get_args(lexic[1:], state))
-            binarian_assert(len(op.args) != 1, "Return must have one argument.", state)
-            return op
+    elif lexic[0] == "index" | "append" | "zip":
+        op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 2, f"{lexic[0][0].upper() + lexic[0][1:]} must have two argument.", state)
+        return op
 
-        case _:
-            return Oper(OpIds.call, state.current_line, [Oper(OpIds.variable, state.current_line, values=[lexic[0]])] + get_args(lexic[1:], state))
+    elif lexic[0] == "setindex" | "pyeval":
+        op = Oper(type.__getattribute__(OpIds, lexic[0]), state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 3, f"{lexic[0][0].upper() + lexic[0][1:]} must have three argument.", state)
+        return op
+
+    elif lexic[0] == "if" | "elif" | "while":
+        op = Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have one argument.", state)
+        op.oper = parse_block(state, state.current_line)
+        return op
+    
+    elif lexic[0] == "else":
+        op = Oper(OpIds.else_, state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 0, "Else must have no argument.", state)
+        op.oper = parse_block(state, state.current_line)
+        return op
+
+    elif lexic[0] == "for":
+        op = Oper(OpIds.for_, state.current_line, get_args(lexic[2:], state), values=[lexic[1]])
+        binarian_assert(len(op.args) != 1, "For must have two argument.", state)
+        binarian_assert(is_name_unavailable(op.values[0], state), f"For variable name is unavailable : {op.args[0]}", state)
+        op.oper = parse_block(state, state.current_line)
+        return op
+
+    elif lexic[0] == "break" | "continue":
+        binarian_assert(len(lexic) != 1, f"{lexic[0][0].upper() + lexic[0][1:]} must have no arguments.", state)
+        return Oper(type.__getattribute__(OpIds, lexic[0] + "_"), state.current_line,)
+
+    elif lexic[0] == "func":
+        parts = line.split(":", maxsplit=1)
+        parts[0] = parts[0].replace("{", "").replace("}", "").split()
+
+        binarian_assert(len(parts[0]) < 2, "Function must have name.", state)
+        if len(parts[0]) == 2:
+            name = parts[0][1].strip()
+            ret_type = object
+        elif len(parts[0]) == 3:
+            name = parts[0][2].strip()
+            ret_type = get_type(parts[0][1], state, {}, True)
+        else:
+            throw_exception("Function first part must have only 2 arguments.", state)
+
+        binarian_assert(is_name_unavailable(name, state), f"Function name is unavailiable : {name}.", state)
+
+        args = []
+        args_types = []
+        if len(parts) > 1:
+            for i in parts[1].replace("{", "").replace("}", "").split(","):
+                i = i.split(":")
+                if len(i) == 2: 
+                    args.append(i[0].strip())
+                    args_types.append(get_type(i[1].strip(), state, {}, True))
+                elif len(i) == 1 and i[0].strip():
+                    args.append(i[0].strip())
+                    args_types.append(object)
+                else:
+                    throw_exception('Argument must have only one or fewer ":" and must have a name.', state)
+                binarian_assert(is_name_unavailable(args[-1], state), f"Argument name is unavailiable : {args[-1]}.", state)
+
+        op = Oper(OpIds.func, state.current_line, values=[name, *args], types=[ret_type, *args_types])
+        op.oper = parse_block(state, state.current_line)
+        return op
+
+    elif lexic[0] == "return":
+        op = Oper(OpIds.return_, state.current_line, get_args(lexic[1:], state))
+        binarian_assert(len(op.args) != 1, "Return must have one argument.", state)
+        return op
+
+    else:
+        return Oper(OpIds.call, state.current_line, [Oper(OpIds.variable, state.current_line, values=[lexic[0]])] + get_args(lexic[1:], state))

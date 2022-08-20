@@ -3,7 +3,7 @@ import pickle
 
 from time import time
 from posixpath import abspath
-from typing import Callable
+from typing import Callable, Optional
 
 from parsing.parsing import *
 from parsing.graph_ast import *
@@ -70,7 +70,7 @@ class ExecutionState:
             "parse_line" : parse_line
         }
 
-def execute_line(op : Oper, state : ExecutionState, local : dict[str, object] | None, is_expr : bool = True) -> object:
+def execute_line(op : Oper, state : ExecutionState, local : Optional[dict[str, object]], is_expr : bool = True) -> object:
     """Executes one operation"""
     state.current_line = op.line
 
@@ -89,94 +89,68 @@ def execute_line(op : Oper, state : ExecutionState, local : dict[str, object] | 
     if op.id not in (OpIds.else_, OpIds.elif_) and not state.is_expr and state.opened_ifs:
         del state.opened_ifs[-1]
 
-
-    match op.id:
-        case OpIds.variable:
-            binarian_assert(op.values[0] not in full_vars, f"Variable {op.values[0]} is not defined", state)
-            return full_vars[op.values[0]]
-
-        case OpIds.value:
-            ret = op.values[0]
-            if isinstance(ret, list):
-                res = List()
-                for i in ret:
-                    res.append(execute_line(i, state, local))
-                return res
-            else:
-                return ret
-
-        case OpIds.operation:
-            return execute_oper(op, state, local)
-
-        case OpIds.var:
-            var_keyword(op, state, local if local is not None else state.vars, local)
-
-        case OpIds.drop:
-            drop_keyword(op, state, local if local is not None else state.vars)
-
-        case OpIds.input:
-            return input_keyword(op, state)
-
-        case OpIds.convert:
-            return convert_keyword(op, state, local)
-
-        case OpIds.pyeval:
-            return pyeval_keyword(op, state, local)
-
-        case OpIds.and_:
-            return and_keyword(op, state, local)
-
-        case OpIds.or_:
-            return or_keyword(op, state, local)
-
-        case OpIds.not_:
-            return not_keyword(op, state, local)
-
-        case OpIds.index:
-            return index_keyword(op, state, local)
-
-        case OpIds.setindex:
-            return setindex_keyword(op, state, local)
-
-        case OpIds.append:
-            return append_keyword(op, state, local)
-
-        case OpIds.if_:
-            if_keyword(op, state, local)
-
-        case OpIds.else_:
-            else_keyword(op, state, local)
-
-        case OpIds.elif_:
-            elif_keyword(op, state, local)
-
-        case OpIds.for_:
-            for_keyword(op, state, local)
-
-        case OpIds.while_:
-            while_keyword(op, state, local)
-        
-        case OpIds.break_:
-            break_keyword(op, state)
-
-        case OpIds.continue_:
-            continue_keyword(op, state)
-
-        case OpIds.func:
-            func_keyword(op, state, local if local is not None else state.vars, is_func)
-
-        case OpIds.return_:
-            return return_keyword(op, state, is_func, local)
-
-        case OpIds.call:
-            return call_keyword(op, state, local)
-
-        case _:
-            assert False, "Unreachable" 
+    if op.id == OpIds.variable:
+        binarian_assert(op.values[0] not in full_vars, f"Variable {op.values[0]} is not defined", state)
+        return full_vars[op.values[0]]
+    elif op.id == OpIds.value:
+        ret = op.values[0]
+        if isinstance(ret, list):
+            res = List()
+            for i in ret:
+                res.append(execute_line(i, state, local))
+            return res
+        else:
+            return ret
+    elif op.id == OpIds.operation:
+        return execute_oper(op, state, local)
+    elif op.id == OpIds.var:
+        var_keyword(op, state, local if local is not None else state.vars, local)
+    elif op.id == OpIds.drop:
+        drop_keyword(op, state, local if local is not None else state.vars)
+    elif op.id == OpIds.input:
+        return input_keyword(op, state)
+    elif op.id == OpIds.convert:
+        return convert_keyword(op, state, local)
+    elif op.id == OpIds.pyeval:
+        return pyeval_keyword(op, state, local)
+    elif op.id == OpIds.and_:
+        return and_keyword(op, state, local)
+    elif op.id == OpIds.or_:
+        return or_keyword(op, state, local)
+    elif op.id == OpIds.not_:
+        return not_keyword(op, state, local)
+    elif op.id == OpIds.index:
+        return index_keyword(op, state, local)
+    elif op.id == OpIds.setindex:
+        return setindex_keyword(op, state, local)
+    elif op.id == OpIds.append:
+        return append_keyword(op, state, local)
+    elif op.id == OpIds.if_:
+        if_keyword(op, state, local)
+    elif op.id == OpIds.else_:
+        else_keyword(op, state, local)
+    elif op.id == OpIds.elif_:
+        elif_keyword(op, state, local)
+    elif op.id == OpIds.for_:
+        for_keyword(op, state, local)
+    elif op.id == OpIds.while_:
+        while_keyword(op, state, local)
+    elif op.id == OpIds.break_:
+        break_keyword(op, state)
+    elif op.id == OpIds.continue_:
+        continue_keyword(op, state)
+    elif op.id == OpIds.func:
+        func_keyword(op, state, local if local is not None else state.vars, is_func)
+    elif op.id == OpIds.return_:
+        return return_keyword(op, state, is_func, local)
+    elif op.id == OpIds.call:
+        return call_keyword(op, state, local)
+    else:
+        assert False, "Unreachable" 
     
     return None
 
-def execute_opers(opers : list[Oper], state : ExecutionState, local : dict[str, object] | None,
+def execute_opers(opers : list[Oper], state : ExecutionState, local : Optional[dict[str, object]],
  main : bool = False, is_loop : bool = False) -> None:
     """Executes list of operations"""
     for i in opers:

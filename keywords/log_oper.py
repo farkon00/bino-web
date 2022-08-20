@@ -1,17 +1,19 @@
+from typing import Optional
+
 from funcs.utils import check_args
 from parsing.oper import Oper
 
-def and_keyword(op : Oper, state, local : dict[str, object] | None) -> int:
+def and_keyword(op : Oper, state, local : Optional[dict[str, object]]) -> int:
     arg1, arg2 = check_args(op, [object, object], state, local)
 
     return int(arg1 and arg2)
 
-def or_keyword(op : Oper, state, local : dict[str, object] | None) -> int:
+def or_keyword(op : Oper, state, local : Optional[dict[str, object]]) -> int:
     arg1, arg2 = check_args(op, [object, object], state, local)
 
     return int(arg1 or arg2)
 
-def not_keyword(op : Oper, state, local : dict[str, object] | None) -> int:
+def not_keyword(op : Oper, state, local : Optional[dict[str, object]]) -> int:
     arg = check_args(op, [object], state, local)[0]
 
     return int(not arg)
