@@ -18,7 +18,6 @@ class ForbiddenModules(MetaPathFinder):
     def find_spec(self, fullname, path, target=None):
         if fullname in self.RESTRICTED_MODULES:
             raise ImportError("Can't import restricted module in online mode")
-sys.meta_path.insert(0, ForbiddenModules())
 
 class DummySys:
     def __init__(self):
@@ -48,6 +47,8 @@ def pyeval_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     glob = {i : (list(j) if isinstance(j, List) else j) for i, j in imports}
     glob = {**glob, "throw_exception" : throw_exception, "state" : state}
 
+    sys.meta_path.insert(0, ForbiddenModules())
+
     for i in ForbiddenModules.RESTRICTED_MODULES:
         try:
             del sys.modules[i]
@@ -64,6 +65,7 @@ def pyeval_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
 
     # Clean up sandbox
     sys.modules["sys"] = real_sys
+    real_sys.meta_path.pop(0)
 
     ret = []
     for i in exports:
