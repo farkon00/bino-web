@@ -24,7 +24,7 @@ class DummySys:
         self.stdout = sys.stdout
         self.stderr = sys.stderr
         self.stdin = sys.stdin
-        self.argv = sys.argv
+        self.argv = ["your_app.py"]
 
 def convert_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
     original = state.GLOBAL_FUNCS['execute_line'](op.args[0], state, local)
