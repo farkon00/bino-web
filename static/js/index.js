@@ -1,5 +1,6 @@
-const code_area = document.getElementById('code-area');
-const out_frame = document.getElementById('result-frame-text');
+const code_area  = document.getElementById("code-area");
+const out_frame  = document.getElementById("result-frame-text");
+const run_button = document.getElementById("run-button");
 const send_timer_time = 7000;
 
 const socket = io();
@@ -8,6 +9,7 @@ let prev_text = code_area.value;
 let send_timer = setTimeout(sendCode, send_timer_time); 
 
 code_area.addEventListener("input", onInput);
+run_button.addEventListener("click", sendCode)
 
 function onInput(event) {
     if (event.inputType == "insertLineBreak") sendCode();

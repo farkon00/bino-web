@@ -9,6 +9,19 @@ body {
     color: rgb(69, 69, 69);
 }
 
+#run-button {
+    transition-property: fill;
+    transition-duration: 0.2s;
+}
+
+#run-button:hover {
+    fill: #4BF140;
+}
+
+#run-button:not(hover) {
+    fill: #4BCE40;
+}
+
 #code-area {
     color: var(--default-text-color);
     background-color: #1a1b26;
