@@ -11,12 +11,14 @@ from parsing.oper import Oper
 
 # Fobiding for pyeval to import os
 class ForbiddenModules(MetaPathFinder):
-    RESTRICTED_MODULES = ["os", "commands", "subprocess", "pty", "platform", "pdb", "pip"]
+    ALLOWED_MODULES = [
+        "math", "random"
+    ]
     def __init__(self):
         super().__init__()
 
     def find_spec(self, fullname, path, target=None):
-        if fullname in self.RESTRICTED_MODULES:
+        if fullname not in self.ALLOWED_MODULES:
             raise ImportError("Can't import restricted module in online mode")
 
 class DummySys:
@@ -49,10 +51,9 @@ def pyeval_keyword(op : Oper, state, local : Optional[Dict[str, object]]):
 
     sys.meta_path.insert(0, ForbiddenModules())
 
-    for i in ForbiddenModules.RESTRICTED_MODULES:
-        try:
-            del sys.modules[i]
-        except KeyError: pass
+    for module in sys.modules.copy():
+        if module in ForbiddenModules.ALLOWED_MODULES: continue
+        del sys.modules[module]
 
     real_sys = sys
 

@@ -25,12 +25,11 @@ def is_alive(process: multiprocessing.Process):
 
 def time_limiter(proc : multiprocessing.Process, pipe):
     try:
-        if proc.is_alive():
-            proc.kill()
-            proc.close()
-    except ValueError: pass
-
-    pipe.send(f"Your program was running over {DEFAULT_TIME_LIMIT} seconds.\nYou can run this program using binarian locally installed on your pc.")
+        if not proc.is_alive(): return
+    except ValueError: return
+    proc.terminate()
+    pipe.send(f"Your program was running over {DEFAULT_TIME_LIMIT} seconds.\n"
+                "You can run this program using binarian locally installed on your pc.")
 
 def run_inter(code, pipe):
     out = OutputWrapper()
