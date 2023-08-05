@@ -1,12 +1,13 @@
 body {
     --coding-areas-size: 50vw;
     --default-text-color: #787c99;
+    color: var(--default-text-color);
     background-color: #14141b;
 }
 
 #bin-lable {
     font-weight: bold;
-    color: rgb(69, 69, 69);
+    color: #454545;
 }
 
 #run-button {
@@ -17,15 +18,62 @@ body {
 #run-button:hover {
     fill: #4BF140;
 }
-
 #run-button:not(hover) {
     fill: #4BCE40;
+}
+
+#dropdown {
+    background-color: #0f1016;
+    padding: 5px 0 5px 5px;
+    width: 15vw;
+    font-size: 20px;
+}
+
+#dropdown-arrow {
+    font-size: 30px;
+}
+
+#dropdown-menu {
+    display: none;
+    position: fixed;
+    padding: 5px 5px;
+    /* border-radius: 10px; */
+    width: 15vw;
+    background-color: #0f1016;
+}
+
+.example-separator {
+    margin: 0 10px;
+    background-color: #808080;
+    border-radius: 2px;
+}
+
+.dropdown-option {
+    font-size: 20px;
+    display: block;
+}
+
+.dropdown-option:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+*:has(.dropdown-hover-allowed:hover) #dropdown-menu {
+    display: block;
+}
+
+*:has(.dropdown-hover-allowed:hover) #dropdown-arrow::after {
+    content: "chevron_left";
+}
+
+*:has(.dropdown-hover-allowed:not(hover)) #dropdown-arrow::after {
+    content: "expand_more";
 }
 
 #code-area {
     color: var(--default-text-color);
     background-color: #1a1b26;
-    height: 50vh;
+    height: 35vh;
     min-width: var(--coding-areas-size);
     width: 100%;
 }
@@ -49,7 +97,7 @@ footer {
 }
 
 .footer-link {
-    color: rgb(69, 69, 69);
+    color: #454545;
     padding: 0 5px;
 }
 
@@ -67,9 +115,9 @@ footer {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(216, 216, 216, 0.05);
+    background: #d8d8d80d;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(216, 216, 216, 0.1);
+    background: #d8d8d81a;
 }

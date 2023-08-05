@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="../static/css/style.css">
     <title>Binarian</title>
 </head>
@@ -13,11 +14,29 @@
         <div>
             <h1 id="bin-lable" class="text-center mb-2 d-flex justify-content-between">
                 Binarian language
-                <!--Play button-->
+                <!--Run button-->
                 <svg width="48" height="48" viewBox="0 0 69 78" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path id="run-button" d="M66 33.8038C70 36.1132 70 41.8868 66 44.1962L9 77.1051C5 79.4145 -3.82596e-06 76.5278 -3.62407e-06 71.909L-7.47073e-07 6.09103C-5.45179e-07 1.47223 5 -1.41452 9 0.89488L66 33.8038Z" fill="#4BCE40"/>
                 </svg>
             </h1>
+            <div class="d-flex justify-content-end">
+                <div id="dropdown" class="d-flex justify-content-between dropdown-hover-allowed">
+                    <span id="dropdown-text">Example</span>
+                    <span id="dropdown-arrow" class="material-symbols-rounded"></span>
+                </div>
+            </div>
+            <div class="mb-2 d-flex justify-content-end">
+                <div id="dropdown-menu" class="dropdown-hover-allowed">
+                    <span class="dropdown-option"
+                        data-example-id="hello_world">Hello, world!</span>
+                    <hr class="example-separator"/>
+                    <span class="dropdown-option"
+                        data-example-id="fibonacci">Fibonacci sequence</span>
+                    <hr class="example-separator"/>
+                    <span class="dropdown-option"
+                        data-example-id="rule110">Rule110</span>
+                </div>
+            </div>
             <textarea id="code-area"></textarea>
             <div id="result-frame" class="mt-3">
                 <pre id="result-frame-text"></pre>
