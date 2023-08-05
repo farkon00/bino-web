@@ -11,6 +11,7 @@ run_button.addEventListener("click", sendCode)
 
 function onInput(event) {
     if (event.inputType == "insertLineBreak") sendCode();
+    if (event.inputType == "insertText" && event.value == "\n") sendCode();
 }
 
 function sendCode() {
@@ -27,6 +28,26 @@ function sendCode() {
     clearTimeout(send_timer);
     send_timer = setTimeout(sendCode, send_timer_time);
 }
+
+function insert(text) {
+    const selection_start = code_area.selectionStart;
+    const selection_end = code_area.selectionEnd;
+    const old_text = code_area.value;
+  
+    const prefix = old_text.substring(0, selection_start);
+    const suffix = old_text.substring(selection_end);
+    code_area.value = `${prefix}${text}${suffix}`;
+
+    code_area.setSelectionRange(selection_start + 4, selection_start + 4);
+  }
+
+document.addEventListener("keydown", function(e) {
+    console.log(e.target, e.key);
+    if (e.key == "Tab") {
+        e.preventDefault();
+        insert("    ");
+    }
+})
 
 const dropdown_options = document.getElementsByClassName("dropdown-option");
 for (let i = 0; i < dropdown_options.length; i++) {
