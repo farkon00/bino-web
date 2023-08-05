@@ -77,6 +77,23 @@ const examples = {
 
 print (fib 8)
 `,
+    fizzbuzz:
+`var i = 1
+while (<= i 100) {
+    if (== (% i 15) 0) {
+        print "fizzbuzz" 
+    }
+    elif (== (% i 5) 0) {
+        print "buzz"
+    }
+    elif (== (% i 3) 0) {
+        print "fizz"
+    }
+    else {
+        print i
+    }
+    var i = (+ i 1)
+}`,
     rule110:
 `// Input
 var initial = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
